@@ -12,6 +12,7 @@ export class FileUploadFormComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+
   }
 
   fileChange(e) {

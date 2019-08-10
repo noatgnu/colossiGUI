@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
 
   fileEventHandler(e: FormData) {
     this.formData = e;
+    console.log(this.formData);
   }
 
   upload() {
