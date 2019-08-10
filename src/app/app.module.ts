@@ -9,6 +9,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import { HomeComponent } from './components/home/home.component';
 import { FileUploadFormComponent } from './components/file-upload-form/file-upload-form.component';
 import { GraphingComponent } from './components/graphing/graphing.component';
+import {FileUploadService} from './service/file-upload.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,7 @@ import { GraphingComponent } from './components/graphing/graphing.component';
     ReactiveFormsModule,
     NgbModule
   ],
-  providers: [D3Service],
+  providers: [D3Service, FileUploadService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
