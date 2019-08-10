@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <form>
+        <div class="input-group">
+          <div class="input-group-prepend" >
+            <span class="input-group-text" id="label-file-input">File Input</span>
+          </div>
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" aria-label="file-input" aria-describedby="label-file-input" (change)="fileChange($event)" required>
+            <label class="custom-file-label" for="label-file-input">{{fileName||'Select File'}}</label>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
