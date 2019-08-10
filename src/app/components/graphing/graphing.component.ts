@@ -1,3 +1,4 @@
+/* tslint:disable:no-string-literal */
 import {AfterViewInit, Component, ElementRef, OnInit} from '@angular/core';
 import {D3, D3Service} from 'd3-ng2-service';
 
@@ -36,7 +37,41 @@ export class GraphingComponent implements OnInit, AfterViewInit {
 
     const groupCounts = {};
     const globalCounts = [];
-    const meanGenerator = this.d3.randomUniform(10);
+    const meanGenerator = d3.randomUniform(10);
+    for (let i = 0; i < 7; i++) {
+      const randomMean = meanGenerator();
+      const generator = d3.randomNormal(randomMean);
+      const key = i.toString();
+      groupCounts[key] = [];
+      for (let j = 0; j < 100; j++) {
+        const entry = generator();
+        groupCounts[key].push(entry);
+      }
+    }
+
+    for (const key of Object.keys(groupCounts)) {
+      groupCounts[key] = groupCounts[key].sort(this.sortNumber);
+    }
+
+
+  }
+
+  boxQuartiles(d3, d) {
+    return [
+      d3.quantile(d, .25),
+      d3.quantile(d, .5),
+      d3.quantile(d, .75)
+    ];
+  }
+
+  sortNumber(a, b) {
+    return a - b;
+  }
+
+  generateDemoData(d3) {
+    const groupCounts = {};
+    const globalCounts = [];
+    const meanGenerator = d3.randomUniform(10);
     for (let i = 0; i < 7; i++) {
       const randomMean = meanGenerator();
       const generator = d3.randomNormal(randomMean);
@@ -54,19 +89,16 @@ export class GraphingComponent implements OnInit, AfterViewInit {
 
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(Object.keys(groupCounts));
 
-    const b
-
-  }
-
-  boxQuartiles(d3, d) {
-    return [
-      d3.quantile(d, .25),
-      d3.quantile(d, .5),
-      d3.quantile(d, .75)
-    ];
-  }
-
-  sortNumber(a, b) {
-    return a - b;
+    const data = [];
+    for (const [key, groupCount] of Object.entries(groupCounts)) {
+      const record = {};
+      const localMin = d3.min(groupCount);
+      const localMax = d3.max(groupCount);
+      record['key'] = key;
+      record['counts'] = groupCount;
+      record['quartile'] = this.boxQuartiles(d3, groupCount);
+      record['whiskers'] = [localMin, localMax];
+      record['color'] = colorScale(key);
+    }
   }
 }
