@@ -48,9 +48,13 @@ export class GraphingComponent implements OnInit, AfterViewInit {
       }
     }
 
-    for (const key in groupCounts) {
+    for (const key of Object.keys(groupCounts)) {
       groupCounts[key] = groupCounts[key].sort(this.sortNumber);
     }
+
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(Object.keys(groupCounts));
+
+    const b
 
   }
 
