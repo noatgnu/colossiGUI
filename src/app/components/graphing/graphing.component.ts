@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit} from '@angular/core';
+import {D3Service} from 'd3-ng2-service';
 
 @Component({
   selector: 'app-graphing',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GraphingComponent implements OnInit {
 
-  constructor() { }
+  constructor(element: ElementRef, d3Service: D3Service) { }
 
   ngOnInit() {
   }
