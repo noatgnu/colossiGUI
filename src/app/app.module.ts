@@ -11,13 +11,16 @@ import { FileUploadFormComponent } from './components/file-upload-form/file-uplo
 import { GraphingComponent } from './components/graphing/graphing.component';
 import {FileUploadService} from './service/file-upload.service';
 import {HttpClientModule} from '@angular/common/http';
+import { DotPlotComponent } from './components/dot-plot/dot-plot.component';
+import {DemoGeneratorService} from './service/demo-generator.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     FileUploadFormComponent,
-    GraphingComponent
+    GraphingComponent,
+    DotPlotComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +30,7 @@ import {HttpClientModule} from '@angular/common/http';
     NgbModule,
     HttpClientModule
   ],
-  providers: [D3Service, FileUploadService],
+  providers: [D3Service, FileUploadService, DemoGeneratorService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

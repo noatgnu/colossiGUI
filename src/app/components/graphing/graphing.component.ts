@@ -1,8 +1,6 @@
 /* tslint:disable:no-string-literal only-arrow-functions */
 import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
 import {D3, D3Service, Transition} from 'd3-ng2-service';
-import { selection, select as d3Select } from 'd3-selection';
-import 'd3-transition'
 
 
 @Component({
@@ -65,10 +63,8 @@ export class GraphingComponent implements OnInit, AfterViewInit {
     const svgGroup = svg.append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     const axisG = svgGroup.append('g');
-    //.attr('transform', 'translate(25,0)');
     const axisBottomG = svgGroup.append('g');
     const g = svgGroup.append('g');
-    //.attr('transform', 'translate(20,5)');
 
     const verticalLines = g.selectAll('.verticalLines').data(data).enter().append('line')
       .attr('x1', function(datum) {
