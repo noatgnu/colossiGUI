@@ -7,8 +7,8 @@
     <ul class="navbar-nav mr-auto">
 
     </ul>
-    <div id="announcement">
-
+    <div id="announcement" class="nav-item text-light">
+      <span *ngIf="ant|async; let ant;">{{ant}}</span>
     </div>
   </div>
 </nav>

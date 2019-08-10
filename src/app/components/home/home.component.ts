@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Form, FormBuilder, FormGroup} from '@angular/forms';
 import {FileUploadService} from '../../service/file-upload.service';
+import {AnnouncementService} from '../../service/announcement.service';
 
 @Component({
   selector: 'app-home',
@@ -10,7 +11,7 @@ import {FileUploadService} from '../../service/file-upload.service';
 export class HomeComponent implements OnInit {
   form: FormGroup;
   formData: FormData;
-  constructor(private fb: FormBuilder, private fileUpload: FileUploadService) { }
+  constructor(private fb: FormBuilder, private fileUpload: FileUploadService, private announce: AnnouncementService) { }
 
   ngOnInit() {
     this.createForm();
@@ -29,9 +30,9 @@ export class HomeComponent implements OnInit {
 
   upload() {
     this.formData.set('extra_params', new Blob([JSON.stringify(this.form.value)], {type: 'application/json'}));
-    console.log(this.formData);
+    this.announce.updateAnnouncement('Processing...');
     this.fileUpload.postFormData(this.formData).subscribe((response) => {
-      console.log(response);
+      this.announce.updateAnnouncement('Completed.');
     });
   }
 }

@@ -34,18 +34,19 @@ export class DotPlotComponent implements OnInit, AfterViewInit {
     const width = 900;
     const height = 400;
 
-    const margin = {top: 20, right: 10, bottom: 20, left: 40};
+    const margin = {top: 40, right: 10, bottom: 20, left: 40};
 
     const totalWidth = width + margin.left + margin.right;
     const totalHeight = height + margin.top + margin.bottom;
     const uniqueGroup = [];
     const globalCounts = [];
     for (const i of this.userData) {
-      if (uniqueGroup.indexOf(i.label) >= 0) {
+      if (uniqueGroup.indexOf(i.label) === -1) {
         uniqueGroup.push(i.label);
       }
       globalCounts.push(i);
     }
+    console.log(uniqueGroup);
     const minX = d3.min(globalCounts, function(d) {
       return d.x;
     });
@@ -59,6 +60,7 @@ export class DotPlotComponent implements OnInit, AfterViewInit {
       return d.y;
     });
     console.log(minY, maxY);
+    const distanceBetweenLegend = width / uniqueGroup.length;
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(uniqueGroup);
     const xScale = d3.scaleLinear().domain([minX, maxX]).range([0, width]);
     const yScale = d3.scaleLinear().domain([minY, maxY]).range([height, 0]);
@@ -66,6 +68,8 @@ export class DotPlotComponent implements OnInit, AfterViewInit {
       .attr('height', totalHeight);
     const svgGroup = svg.append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+
     const axisG = svgGroup.append('g');
     const axisBottomG = svgGroup.append('g');
     const g = svgGroup.append('g');
@@ -82,6 +86,24 @@ export class DotPlotComponent implements OnInit, AfterViewInit {
     }).attr('stroke', function(d) {
       return colorScale(d.label);
     }).attr('r', 2.5);
+
+    const legendPart = svg.append('g');
+
+    const legendColor = legendPart.selectAll('circle').data(uniqueGroup).enter().append('circle').attr('cx', function(d, i) {
+      console.log(d);
+      return (i+1) * distanceBetweenLegend - distanceBetweenLegend / 2;
+    }).attr('cy', margin.top * 2/3).attr('fill', function(d) {
+      return colorScale(d);
+    }).attr('stroke', function(d) {
+      return colorScale(d);
+    }).attr('r', 2.5);
+
+    const legendText = legendPart.selectAll('text').data(uniqueGroup).enter().append('text').text(function(d) {
+      console.log(d);
+      return d;
+    }).attr('x', function(d, i) {
+      return (i+1) * distanceBetweenLegend - distanceBetweenLegend / 2 + 4;
+    }).attr('y', margin.top * 2/3 + 2.5).attr('font-size', 10).attr('fill', '#000');
   }
 
 }
