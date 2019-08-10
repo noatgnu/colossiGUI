@@ -10,6 +10,7 @@ import { HomeComponent } from './components/home/home.component';
 import { FileUploadFormComponent } from './components/file-upload-form/file-upload-form.component';
 import { GraphingComponent } from './components/graphing/graphing.component';
 import {FileUploadService} from './service/file-upload.service';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import {FileUploadService} from './service/file-upload.service';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    HttpClientModule
   ],
   providers: [D3Service, FileUploadService],
   bootstrap: [AppComponent]

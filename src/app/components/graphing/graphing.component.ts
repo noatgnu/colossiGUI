@@ -1,6 +1,9 @@
 /* tslint:disable:no-string-literal only-arrow-functions */
 import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
 import {D3, D3Service, Transition} from 'd3-ng2-service';
+import { selection, select as d3Select } from 'd3-selection';
+import 'd3-transition'
+
 
 @Component({
   selector: 'app-graphing',
@@ -39,21 +42,14 @@ export class GraphingComponent implements OnInit, AfterViewInit {
     if (this.demo) {
       const {data, globalCounts, groupCounts} = this.generateDemoData(d3);
       const {yScale, xScale, g} = this.drawBoxplot(d3, width, height, d3ParentElement, totalWidth, totalHeight, margin, globalCounts, data, groupCounts);
-      for (const k of Object.keys(groupCounts)) {
-        const randomData = groupCounts[k][Math.floor(Math.random() * groupCounts[k].length)];
-        console.log(randomData, k, xScale(randomData));
-
-        const randomPoint = g.append('circle').attr('cx', xScale(k) + xScale.bandwidth() / 2).attr('cy', yScale(randomData))
-          .attr('fill', '#000').attr('r', 3.5).attr('stroke-width', '1').attr('stroke', '#000');
-        randomPoint.on('mouseover', (d, i) => {
-          d3.select(d3.event.currentTarget).attr('fill', '#FFF');
-        }).on('mouseout', (d, i) => {
-          d3.select(d3.event.currentTarget).attr('fill', '#000');
-        });
-
-      }
+      const circles = g.selectAll('circle').data(Object.keys(groupCounts)).enter().append('circle').attr('r', 3.5).attr('stroke-width', '1')
+        .attr('stroke', '#000').attr('fill', '#000').attr('cy', function(datum) {
+        const randomData = groupCounts[datum][Math.floor(Math.random() * groupCounts[datum].length)];
+        return yScale(randomData);
+      }).attr('cx', function(datum) {
+        return xScale(datum) + xScale.bandwidth() / 2;
+      });
     }
-
   }
 
   private drawBoxplot(d3, width: number, height: number, d3ParentElement, totalWidth, totalHeight, margin, globalCounts, data, groupCounts) {
