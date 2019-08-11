@@ -61,12 +61,12 @@
         <thead>
           <tr>
             <th scope="col">Summary statistics</th>
-            <th scope="col">Result</th>
+            <th scope="col">Result (Our neural network predicted that this data should <span *ngIf="result['prediction']===0" class="text-danger">not</span> be included in Stemformatics)</th>
             <th scope="col">Boxplot</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let r of result['summaryStats']">
+          <tr class="{{color[result['prediction']]}}" *ngFor="let r of result['summaryStats']">
             <td>{{r['Var1']}}</td>
             <td>{{r['Freq']}}</td>
             <td><app-graphing class="mt-2" [metricName]="r['Var1']" [userData]="[r['Freq']]"></app-graphing></td>

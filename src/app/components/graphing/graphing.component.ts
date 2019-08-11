@@ -26,6 +26,8 @@ export class GraphingComponent implements OnInit, AfterViewInit, OnDestroy {
   totalHeight = this.height + this.margin.top + this.margin.bottom;
   groupCounts = {};
   globalCounts = [];
+
+
   constructor(element: ElementRef, d3Service: D3Service, private resultService: ResultService) {
     this.d3 = d3Service.getD3();
     this.parentNativeElement = element.nativeElement;

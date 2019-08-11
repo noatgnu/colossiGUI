@@ -27,9 +27,11 @@ export class HomeComponent implements OnInit {
   isHidden = true;
   showAllToggle = false;
   metric = [];
+  color = {0: 'table-danger', 1: 'table-success'};
   toggle() {
     this.isHidden = !this.isHidden;
   }
+
   constructor(private fb: FormBuilder, private fileUpload: FileUploadService, private announce: AnnouncementService,
               private result: ResultService) {
     this.resultObservable = this.result.resultReader;
