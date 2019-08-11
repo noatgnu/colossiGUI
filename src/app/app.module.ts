@@ -15,6 +15,7 @@ import { DotPlotComponent } from './components/dot-plot/dot-plot.component';
 import {DemoGeneratorService} from './service/demo-generator.service';
 import {AnnouncementService} from './service/announcement.service';
 import {ResultService} from './service/result.service';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import {ResultService} from './service/result.service';
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [D3Service, FileUploadService, DemoGeneratorService, AnnouncementService, ResultService],
   bootstrap: [AppComponent]
