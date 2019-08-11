@@ -1,12 +1,19 @@
 <app-file-upload-form (fileEvent)="fileEventHandler($event)"></app-file-upload-form>
-<div class="container mt-4">
+<div class="container mt-4" [@initialize]="isHidden ? 'hidden': 'reveal'">
   <div class="card">
     <div class="card-body">
       <form [formGroup]="form">
         <div class="form-row">
           <div class="col-4">
-            <label class="mt-2" for="example-para">Example-para:</label>
-            <input type="text" formControlName="info" class="form-control" id="example-para">
+            <label class="mt-2" for="cell-type">Cell type(s):</label>
+            <select multiple type="text" formControlName="cellType" class="form-control" id="cell-type">
+              <option value="macrophage">Macrophage</option>
+              <option value=""></option>
+              <option value=""></option>
+            </select>
+          </div>
+          <div class="col-4">
+
           </div>
         </div>
 
@@ -36,6 +43,7 @@
               </tr>
             </tbody>
           </table>
+          <button class="button btn btn-info" (click)="showAllBoxplot()">Show All</button>
         </div>
         <div class="col-4">
           <app-graphing></app-graphing>

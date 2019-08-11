@@ -4,9 +4,19 @@ import {FileUploadService} from '../../service/file-upload.service';
 import {AnnouncementService} from '../../service/announcement.service';
 import {ResultService} from '../../service/result.service';
 import {Observable} from 'rxjs';
+import {trigger, state, style, animate, transition} from '@angular/animations';
 
 @Component({
   selector: 'app-home',
+  animations: [
+    trigger('initialize', [
+      state('hidden', style({
+        opacity: 0,
+      })), state('reveal', style({
+        opacity: 1,
+      })), transition('hidden => reveal', [animate('2s')]),
+    ]),
+  ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
@@ -14,6 +24,11 @@ export class HomeComponent implements OnInit {
   form: FormGroup;
   formData: FormData;
   resultObservable: Observable<unknown>;
+  isHidden = true;
+  showAllToggle = false;
+  toggle() {
+    this.isHidden = !this.isHidden;
+  }
   constructor(private fb: FormBuilder, private fileUpload: FileUploadService, private announce: AnnouncementService,
               private result: ResultService) {
     this.resultObservable = this.result.resultReader;
@@ -21,11 +36,12 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.createForm();
+    this.toggle();
   }
 
   createForm(): void {
     this.form = this.fb.group({
-      info: '',
+      cellType: '',
     });
   }
 
@@ -45,5 +61,9 @@ export class HomeComponent implements OnInit {
       this.result.updateResult(response['body']);
       this.announce.updateAnnouncement('Completed.');
     });
+  }
+
+  showAllBoxPlot() {
+    this.showAllToggle = !this.showAllToggle;
   }
 }
