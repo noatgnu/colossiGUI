@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
   resultObservable: Observable<unknown>;
   isHidden = true;
   showAllToggle = false;
+  metric = [];
   toggle() {
     this.isHidden = !this.isHidden;
   }
@@ -41,7 +42,10 @@ export class HomeComponent implements OnInit {
 
   createForm(): void {
     this.form = this.fb.group({
-      cellType: '',
+      cellType: [],
+      dataType: 'microarray',
+      organism: 'human',
+      database: 'stemformatics'
     });
   }
 
@@ -51,6 +55,7 @@ export class HomeComponent implements OnInit {
   }
 
   sendBoxPlotData(metricName) {
+    console.log(metricName);
     this.result.updateMetric(metricName);
   }
 
@@ -59,6 +64,7 @@ export class HomeComponent implements OnInit {
     this.announce.updateAnnouncement('Processing...');
     this.fileUpload.postFormData(this.formData).subscribe((response) => {
       this.result.updateResult(response['body']);
+      this.metric = Object.keys(response['body']);
       this.announce.updateAnnouncement('Completed.');
     });
   }

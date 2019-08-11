@@ -6,17 +6,47 @@
         <div class="form-row">
           <div class="col-4">
             <label class="mt-2" for="cell-type">Cell type(s):</label>
-            <select multiple type="text" formControlName="cellType" class="form-control" id="cell-type">
+            <select multiple formControlName="cellType" class="form-control" id="cell-type">
               <option value="macrophage">Macrophage</option>
-              <option value=""></option>
-              <option value=""></option>
+              <option value="monocyte">Monocyte</option>
+              <option value="tcell">T-cell</option>
+              <option value="dendritic">Dendritic cell</option>
+              <option value="hematostemcell">Hematopoietic stem cell</option>
+              <option value="messtromal">Mesenchymal stromal cell</option>
+              <option value="inducedpluripotent">Induced pluripotent stem cell</option>
+              <option value="acutemyeloid">Acute myeloid leukaemia</option>
+              <option value="iPSCneuron">iPSC-derived neuron</option>
             </select>
           </div>
           <div class="col-4">
+            <label class="mt-2" for="data-type">Data type:</label>
+            <select formControlName="dataType" class="form-control" id="data-type">
+              <option value="microarray">Microarray</option>
+              <option value="rnaseq">RNASeq</option>
 
+            </select>
+          </div>
+          <div class="col-4">
+            <label class="mt-2" for="organism">Organism:</label>
+            <select formControlName="organism" class="form-control" id="organism">
+             <option value="human">Human</option>
+              <option value="mouse">Mouse</option>
+            </select>
           </div>
         </div>
-
+          <div class="form-row">
+            <div class="col-4">
+              <label class="mt-2" for="database">Database:</label>
+              <select formControlName="database" class="form-control" id="database">
+                <option value="humancell">Human Cell Atlas</option>
+                <option value="stemformatics">Stemformatics</option>
+                <option value="singlecepress">Single Cell Expression Atlas</option>
+                <option value="wormatlas">A Cell Atlas of Worm</option>
+                <option value="GEO">GEO</option>
+                <option value="SRA">SRA</option>
+              </select>
+            </div>
+          </div>
       </form>
 
     </div>
@@ -27,31 +57,31 @@
 
   <div class="card mt-4" *ngIf="resultObservable|async; let result">
     <div class="card-body">
-      <div class="row">
-        <div class="col-8">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Summary statistics</th>
-                <th scope="col">Frequency</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr (mouseover)="sendBoxPlotData(r['Var1'])" *ngFor="let r of result['summaryStats']">
-                <td>{{r['Var1']}}</td>
-                <td>{{r['Freq']}}</td>
-              </tr>
-            </tbody>
-          </table>
-          <button class="button btn btn-info" (click)="showAllBoxplot()">Show All</button>
-        </div>
-        <div class="col-4">
-          <app-graphing></app-graphing>
-        </div>
-      </div>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Summary statistics</th>
+            <th scope="col">Result</th>
+            <th scope="col">Boxplot</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of result['summaryStats']">
+            <td>{{r['Var1']}}</td>
+            <td>{{r['Freq']}}</td>
+            <td><app-graphing class="mt-2" [metricName]="r['Var1']" [userData]="[r['Freq']]"></app-graphing></td>
+          </tr>
+        </tbody>
+      </table>
+
+        <!--<div class="col-4" *ngIf="!showAllToggle">
+          <app-graphing class="mt-2"></app-graphing>
+        </div>-->
+
+<!--      <button class="button btn btn-info" (click)="showAllBoxPlot()">Show All Boxplots</button>-->
     </div>
   </div>
 
-  <app-dot-plot></app-dot-plot>
+<!--  <app-dot-plot></app-dot-plot>-->
 </div>
 

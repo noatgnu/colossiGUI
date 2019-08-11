@@ -13,32 +13,45 @@ import {Subscribable, Subscription} from 'rxjs';
 export class GraphingComponent implements OnInit, AfterViewInit, OnDestroy {
   private d3: D3;
   private parentNativeElement: any;
+  result;
   @Input() standardData: Array<number>;
   @Input() userData: Array<number>;
   @Input() metricName;
-  @Input() demo = true;
+  @Input() demo = false;
   @Input() width = 200;
   @Input() height = 250;
   metricSub: Subscription;
   margin = {top: 20, right: 10, bottom: 20, left: 40};
   totalWidth = this.width + this.margin.left + this.margin.right;
   totalHeight = this.height + this.margin.top + this.margin.bottom;
+  groupCounts = {};
+  globalCounts = [];
   constructor(element: ElementRef, d3Service: D3Service, private resultService: ResultService) {
     this.d3 = d3Service.getD3();
     this.parentNativeElement = element.nativeElement;
-
   }
 
   ngOnInit() {
+    this.result = this.resultService.getResultStorage();
+
+
+    if (this.metricName === undefined) {
+      this.userData = [this.result['summaryStats'][0]['Freq']];
+      this.metricName = this.result['summaryStats'][0]['Var1'];
+    }
+
+    this.standardData = Object.values(this.result['compareDataframe'][this.metricName]);
     this.metricSub = this.resultService.metricReader.subscribe((response) => {
       const result = this.resultService.getResultStorage();
-      let pos = 0;
+
       for (let i = 0; i < result['summaryStats'].length; i++) {
-        if (response === result['summaryStats']['Var1']) {
+
+        if (response === result['summaryStats'][i]['Var1']) {
           this.metricName = response;
-          this.userData = [result['summaryStats'][i]['Freq']]
-          this.standardData = result['compareDataframe'][i]
-          const d3ParentElement = this.d3.select(this.parentNativeElement)
+          this.userData = [result['summaryStats'][i]['Freq']];
+          this.standardData = result['compareDataframe'][i];
+          const d3ParentElement = this.d3.select(this.parentNativeElement);
+          console.log(response);
           d3ParentElement.select('svg').remove();
           this.draw(this.d3, this.width, this.height,  d3ParentElement, this.totalWidth, this.totalHeight, this.margin);
           break;
