@@ -1,6 +1,8 @@
 /* tslint:disable:no-string-literal only-arrow-functions */
-import {AfterViewInit, Component, ElementRef, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {D3, D3Service, Transition} from 'd3-ng2-service';
+import {ResultService} from '../../service/result.service';
+import {Subscribable, Subscription} from 'rxjs';
 
 
 @Component({
@@ -8,19 +10,45 @@ import {D3, D3Service, Transition} from 'd3-ng2-service';
   templateUrl: './graphing.component.html',
   styleUrls: ['./graphing.component.scss']
 })
-export class GraphingComponent implements OnInit, AfterViewInit {
+export class GraphingComponent implements OnInit, AfterViewInit, OnDestroy {
   private d3: D3;
   private parentNativeElement: any;
-  @Input() standardData;
-  @Input() userData;
+  @Input() standardData: Array<number>;
+  @Input() userData: Array<number>;
+  @Input() metricName;
   @Input() demo = true;
-  constructor(element: ElementRef, d3Service: D3Service) {
+  @Input() width = 200;
+  @Input() height = 250;
+  metricSub: Subscription;
+  margin = {top: 20, right: 10, bottom: 20, left: 40};
+  totalWidth = this.width + this.margin.left + this.margin.right;
+  totalHeight = this.height + this.margin.top + this.margin.bottom;
+  constructor(element: ElementRef, d3Service: D3Service, private resultService: ResultService) {
     this.d3 = d3Service.getD3();
     this.parentNativeElement = element.nativeElement;
+
   }
 
   ngOnInit() {
+    this.metricSub = this.resultService.metricReader.subscribe((response) => {
+      const result = this.resultService.getResultStorage();
+      let pos = 0;
+      for (let i = 0; i < result['summaryStats'].length; i++) {
+        if (response === result['summaryStats']['Var1']) {
+          this.metricName = response;
+          this.userData = [result['summaryStats'][i]['Freq']]
+          this.standardData = result['compareDataframe'][i]
+          const d3ParentElement = this.d3.select(this.parentNativeElement)
+          d3ParentElement.select('svg').remove();
+          this.draw(this.d3, this.width, this.height,  d3ParentElement, this.totalWidth, this.totalHeight, this.margin);
+          break;
+        }
+      }
+    });
+  }
 
+  ngOnDestroy(): void {
+    this.metricSub.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -30,23 +58,54 @@ export class GraphingComponent implements OnInit, AfterViewInit {
       d3ParentElement = d3.select(this.parentNativeElement);
     }
 
-    const width = 900;
-    const height = 400;
+    const width = this.width;
+    const height = this.height;
 
     const margin = {top: 20, right: 10, bottom: 20, left: 40};
 
     const totalWidth = width + margin.left + margin.right;
     const totalHeight = height + margin.top + margin.bottom;
+    this.draw(d3, width, height, d3ParentElement, totalWidth, totalHeight, margin);
+  }
+
+  private draw(d3, width, height, d3ParentElement, totalWidth, totalHeight, margin) {
     if (this.demo) {
       const {data, globalCounts, groupCounts} = this.generateDemoData(d3);
       const {yScale, xScale, g} = this.drawBoxplot(d3, width, height, d3ParentElement, totalWidth, totalHeight, margin, globalCounts, data, groupCounts);
       const circles = g.selectAll('circle').data(Object.keys(groupCounts)).enter().append('circle').attr('r', 3.5).attr('stroke-width', '1')
         .attr('stroke', '#000').attr('fill', '#000').attr('cy', function(datum) {
-        const randomData = groupCounts[datum][Math.floor(Math.random() * groupCounts[datum].length)];
-        return yScale(randomData);
-      }).attr('cx', function(datum) {
-        return xScale(datum) + xScale.bandwidth() / 2;
-      });
+          const randomData = groupCounts[datum][Math.floor(Math.random() * groupCounts[datum].length)];
+          return yScale(randomData);
+        }).attr('cx', function(datum) {
+          return xScale(datum) + xScale.bandwidth() / 2;
+        }).exit();
+    } else {
+      const globalCounts = [];
+      for (const i of this.standardData) {
+        globalCounts.push(i);
+      }
+      for (const i of this.userData) {
+        globalCounts.push(i);
+      }
+      const groupCounts = {};
+      groupCounts[this.metricName] = this.standardData;
+      const colorScale = d3.scaleOrdinal(d3.schemeCategory10).domain(Object.keys(groupCounts));
+      const record = {};
+      const localMin = d3.min(this.standardData);
+      const localMax = d3.max(this.standardData);
+      record['key'] = this.metricName;
+      record['counts'] = this.standardData;
+      record['quartile'] = this.boxQuartiles(d3, this.standardData);
+      record['whiskers'] = [localMin, localMax];
+      record['color'] = colorScale(this.metricName);
+      const data = [record];
+      const {yScale, xScale, g} = this.drawBoxplot(d3, width, height, d3ParentElement, totalWidth, totalHeight, margin, globalCounts, data, groupCounts);
+      const circles = g.selectAll('circle').data(this.userData).enter().append('circle').attr('r', 3.5).attr('stroke-width', '1')
+        .attr('stroke', '#000').attr('fill', '#000').attr('cy', function(datum) {
+          return yScale(datum);
+        }).attr('cx', function(datum) {
+          return xScale(record['key']) + xScale.bandwidth() / 2;
+        }).exit();
     }
   }
 
@@ -159,13 +218,13 @@ export class GraphingComponent implements OnInit, AfterViewInit {
   generateDemoData(d3) {
     const groupCounts = {};
     const globalCounts = [];
-    const meanGenerator = d3.randomUniform(10);
-    for (let i = 0; i < 10; i++) {
+    const meanGenerator = d3.randomUniform(100);
+    for (let i = 0; i < 1; i++) {
       const randomMean = meanGenerator();
       const generator = d3.randomNormal(randomMean);
       const key = i.toString();
       groupCounts[key] = [];
-      for (let j = 0; j < 100; j++) {
+      for (let j = 0; j < 300; j++) {
         const entry = generator();
         groupCounts[key].push(entry);
         globalCounts.push(entry);

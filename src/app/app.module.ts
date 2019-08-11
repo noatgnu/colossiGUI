@@ -14,6 +14,7 @@ import {HttpClientModule} from '@angular/common/http';
 import { DotPlotComponent } from './components/dot-plot/dot-plot.component';
 import {DemoGeneratorService} from './service/demo-generator.service';
 import {AnnouncementService} from './service/announcement.service';
+import {ResultService} from './service/result.service';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import {AnnouncementService} from './service/announcement.service';
     NgbModule,
     HttpClientModule
   ],
-  providers: [D3Service, FileUploadService, DemoGeneratorService, AnnouncementService],
+  providers: [D3Service, FileUploadService, DemoGeneratorService, AnnouncementService, ResultService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
