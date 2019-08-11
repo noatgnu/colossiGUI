@@ -1,4 +1,4 @@
-/* tslint:disable:no-string-literal only-arrow-functions */
+/* tslint:disable:no-string-literal only-arrow-functions object-literal-shorthand */
 import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {D3, D3Service, Transition} from 'd3-ng2-service';
 import {ResultService} from '../../service/result.service';
